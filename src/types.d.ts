@@ -5,5 +5,7 @@ export interface Product {
   link: string;
   image: string;
   price: number;
-  discount: number;
+  originalPrice: number;
+  discountRaw: number;
+  discount: string;
 }
