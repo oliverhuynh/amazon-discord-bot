@@ -33,7 +33,7 @@ describe('scrapeAmazonSearch', () => {
   });
 
   it('should scrape Amazon search results for all products', async () => {
-    const results = await scrapeAmazonSearch('', ['amazon.fr', 'amazon.es', 'amazon.com']);
+    const results = await scrapeAmazonSearch('', ['amazon.es', 'amazon.fr', 'amazon.com']);
     console.log(['Results', results]);
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].title).toBeDefined();

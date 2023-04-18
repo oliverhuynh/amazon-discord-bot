@@ -82,7 +82,7 @@ export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []
 
     // Wait for the subcategories to appear
     await page.waitForSelector('#hmenu-content > ul > li > a');
-    if (domain.indexOf('amazon.fr') !== -1) {
+    if (domain.indexOf('amazon.com') === -1) {
       cats = await page.$$eval('#hmenu-content > ul > li > a', (links) =>
         links.map((link) => link.href).filter(url => url.indexOf('/gp/browse.html') !== -1)
       );
