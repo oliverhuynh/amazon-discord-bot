@@ -1,10 +1,10 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { AmazonSite, Product } from './types';
 import { openpage } from './searchSingleAmazonSite';
 import puppeteer from 'puppeteer';
 require('dotenv').config();
-import fs from 'fs';
+import * as fs from 'fs';
 const cacheManager = require('cache-manager');
 const fsStore = require('cache-manager-fs-binary');
 const cacheDir = './cache';
@@ -33,8 +33,6 @@ export const cache_init = async () => {
         }
       });
     });
-    // Wait for cache fill to work
-    await new Promise(resolve => setTimeout(resolve, 3000));
   }
   return cache;
 };
@@ -70,7 +68,7 @@ export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []
   const cachedResult = await cache_get(key);
   let cats;
   if (!cachedResult) {
-    const [page, browser] = await openpage(url);
+    const [page, browser] = await openpage(url, {headless: false});
 
     // Wait for the "Departments" menu to appear
     await page.waitForSelector('#nav-hamburger-menu');
@@ -83,19 +81,19 @@ export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []
     // Wait for the subcategories to appear
     await page.waitForSelector('#hmenu-content > ul > li > a');
     if (domain.indexOf('amazon.com') === -1) {
-      cats = await page.$$eval('#hmenu-content > ul > li > a', (links) =>
-        links.map((link) => link.href).filter(url => url.indexOf('/gp/browse.html') !== -1)
+      cats = await page.$$eval('#hmenu-content > ul > li a[href*="gp/browse.html"]', (links) =>
+        links.map((link) => link.href)
       );
     }
     else {
       // Retrieve the href of each subcategory
-      cats = await page.$$eval('#hmenu-content > ul > li > a', (links) =>
-        links.map((link) => link.href).filter(url => url.indexOf('/s?') !== -1)
+      cats = await page.$$eval('#hmenu-content > ul > li a[href*="/s?"]', (links) =>
+        links.map((link) => link.href)
       );
     }
     await browser.close();
     await cache_set(key, cats);
-    console.log(`Update cached categories for ${url}`, cats);
+    console.log(`Update cached categories for ${url}`, cats.length);
   }
   else {
     cats = cachedResult;

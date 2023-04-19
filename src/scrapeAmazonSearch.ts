@@ -1,15 +1,42 @@
-import { AmazonSite, Product } from './types';
+import { sendDiscordNotification } from './sendDiscordNotification';
+import { AmazonSite, Product, DiscordNotification } from './types';
 import { searchSingleAmazonSite } from './searchSingleAmazonSite';
 import { loopAmazonCategories } from './loopAmazonCategories';
 import { listAmazonCategoryProducts } from './listAmazonCategoryProducts';
 require('dotenv').config();
+import * as fs from 'fs';
 const MAX_DISCOUNT = parseFloat(process.env.MAX_DISCOUNT);
-let loggedProducts: string[] = [];
+const loggedProductsFilePath = './db/loggedProducts.json';
+let loggedProducts: any[] = [];
 
-export async function scrapeAmazonSearch(
+try {
+  const fileData = fs.readFileSync(loggedProductsFilePath, 'utf-8');
+  loggedProducts = JSON.parse(fileData);
+} catch (error) {
+  console.error(error);
+}
+
+export const notify = async (products) => {
+  for (const product of products) {
+    const {title, discountRaw, link, image, originalPrice, price, discount} = product;
+    if (discountRaw > MAX_DISCOUNT && !loggedProducts.includes(link)) {
+      loggedProducts.push(link);
+      fs.writeFileSync(loggedProductsFilePath, JSON.stringify(loggedProducts), 'utf-8');
+      const notification: DiscordNotification = {
+        username: 'Amazon Scraper Bot',
+        avatarUrl: 'https://i.imgur.com/wSTFkRM.png',
+        product,
+      };
+
+      const result = await sendDiscordNotification(notification);
+    }
+  }
+}
+
+export const scrapeAmazonSearch = async (
   keyword: string,
   domains: AmazonSite[] = ['amazon.com', 'amazon.es', 'amazon.fr']
-): Promise<Product[]> {
+): Promise<Product[]> => {
   let products: Product[] = [];
 
   if (keyword === "") {
@@ -19,14 +46,8 @@ export async function scrapeAmazonSearch(
       for (const category of categories) {
         console.log(`Searching products of ${category}`);
         const results = await listAmazonCategoryProducts(category);
-        // console.log([`Result products of ${category}`, results]);
-        for (const {title, discountRaw, link, image, originalPrice, price, discount} of results) {
-          if (discountRaw > MAX_DISCOUNT && !loggedProducts.includes(link)) {
-            loggedProducts.push(link);
-            const logText = `Title: ${title}, Link: ${link}, Image: ${image}, Original Price: ${originalPrice}, Price: ${price}, Discount: ${discount}%\n`;
-            console.log(logText);
-          }
-        }
+        console.log([`Result products of ${category}`, results.length]);
+        notify(results);
         products = [...products, ...results];
         // Wait for random time between 2 to 7 seconds
         const waitTime = Math.floor(Math.random() * 5000) + 2000;
@@ -37,6 +58,7 @@ export async function scrapeAmazonSearch(
     // If a keyword is provided, perform the search on all specified domains
     for (const domain of domains) {
       const results = await searchSingleAmazonSite(keyword, domain);
+      notify(results);
       products = [...products, ...results];
       // Wait for random time between 2 to 7 seconds
       // const waitTime = Math.floor(Math.random() * 5000) + 2000;

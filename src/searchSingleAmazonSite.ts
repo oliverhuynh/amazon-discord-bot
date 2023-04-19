@@ -1,24 +1,46 @@
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';
 import { AmazonSite, Product } from './types';
 import puppeteer from 'puppeteer-core';
 require('dotenv').config();
+const fs = require('fs');
 
 const executablePath = process.env.CHROME_EXECUTABLE_PATH;
 const userDataDir = process.env.CHROME_DATA_DIR;
+
 export const newbrowser = async(args:any = {}): Promise<any> => {
   const browser = await puppeteer.launch({
     userDataDir,
     executablePath,
     defaultViewport: null, ...args});
+  const pid = browser.process().pid;
+
+  fs.appendFileSync('./tmp/browser_pid.txt', pid + '\n');
   return browser;
 }
 
-export const openpage = async(url): Promise<any> => {
+process.on('SIGINT', async () => {
+  // Read the contents of the file into an array
+  const pids = fs.readFileSync('./tmp/browser_pid.txt', 'utf8').split('\n').filter(Boolean);
+
+  // Kill each PID in the array
+  pids.forEach((pid) => {
+    console.log(`Killing PID ${pid}...`);
+    process.kill(pid);
+  });
+
+  // Clear the contents of the file
+  fs.writeFileSync('./tmp/browser_pid.txt', '');
+  console.log('All PIDs killed and file cleared.');
+
+  process.exit();
+});
+
+export const openpage = async(url, args = {}): Promise<any> => {
   // Try open but catch 'For information about migrating to our APIs refer to our Marketplace APIs'
   const catched = 'For information about migrating to our APIs refer to our Marketplace APIs';
-  let browser = await newbrowser({headless: true});
-  // let browser = await newbrowser({headless: true});
+  let browser = await newbrowser({headless: true, ...args});
+  // let browser = await newbrowser({headless: false});
   const page = await browser.newPage();
   await page.goto(url);
   let content = await page.content();

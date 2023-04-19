@@ -23,7 +23,7 @@ describe.skip('listAmazonCategoryProducts', () => {
 
 
 describe('scrapeAmazonSearch', () => {
-  it.skip('should scrape Amazon search results for a specific keyword', async () => {
+  it('should scrape Amazon search results for a specific keyword', async () => {
     const results = await scrapeAmazonSearch('laptop', ['amazon.com', 'amazon.fr', 'amazon.es']);
     console.log(['Results', results]);
     expect(results.length).toBeGreaterThan(0);
@@ -32,7 +32,7 @@ describe('scrapeAmazonSearch', () => {
     expect(results[0].price).toBeDefined();
   });
 
-  it('should scrape Amazon search results for all products', async () => {
+  it.only('should scrape Amazon search results for all products', async () => {
     const results = await scrapeAmazonSearch('', ['amazon.es', 'amazon.fr', 'amazon.com']);
     console.log(['Results', results]);
     expect(results.length).toBeGreaterThan(0);
@@ -41,7 +41,7 @@ describe('scrapeAmazonSearch', () => {
     expect(results[0].price).toBeDefined();
   });
 
-  it.skip('should scrape Amazon search results for discounted products', async () => {
+  it('should scrape Amazon search results for discounted products', async () => {
     const results = await scrapeAmazonSearch('', ['amazon.com', 'amazon.fr', 'amazon.es']);
     console.log(['Results', results]);
     expect(results.length).toBeGreaterThan(0);

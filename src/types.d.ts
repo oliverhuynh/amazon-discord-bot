@@ -9,3 +9,9 @@ export interface Product {
   discountRaw: number;
   discount: string;
 }
+
+export interface DiscordNotification {
+  username: string;
+  avatarUrl: string;
+  product: Product;
+}

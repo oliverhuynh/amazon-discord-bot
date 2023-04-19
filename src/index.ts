@@ -1,3 +1,8 @@
-import scrapeAmazonSearch from './scrapeAmazonSearch';
+import { scrapeAmazonSearch } from './scrapeAmazonSearch';
 
-export { scrapeAmazonSearch };
+async function run() {
+  const results = await scrapeAmazonSearch('', ['amazon.es', 'amazon.fr', 'amazon.com']);
+  console.log(results);
+}
+
+run();

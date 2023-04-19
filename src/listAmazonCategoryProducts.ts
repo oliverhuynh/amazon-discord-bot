@@ -1,5 +1,5 @@
-import puppeteer from 'puppeteer';
-import cheerio from 'cheerio';
+import * as puppeteer from 'puppeteer';
+import * as cheerio from 'cheerio';
 import { AmazonSite, Product } from './types';
 import { exportProduct, newbrowser } from './searchSingleAmazonSite';
 const { URL } = require('url');

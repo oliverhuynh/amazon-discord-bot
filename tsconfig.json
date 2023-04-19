@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+      "skipLibCheck": true,
+      "outDir":"build",
+      "rootDirs": [
+        "src",
+        "tests"
+      ]
+    },
+    "include" :[
+        "src/**/*.ts"
+    ]
+}
