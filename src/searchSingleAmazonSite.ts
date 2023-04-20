@@ -26,7 +26,11 @@ process.on('SIGINT', async () => {
   // Kill each PID in the array
   pids.forEach((pid) => {
     console.log(`Killing PID ${pid}...`);
-    process.kill(pid);
+    const isRunning = process.kill(pid, 0);
+
+    if (isRunning) {
+      process.kill(pid, 'SIGTERM');
+    }
   });
 
   // Clear the contents of the file
