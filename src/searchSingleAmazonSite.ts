@@ -63,6 +63,7 @@ export const exportProduct = async($, element, domain): Promise<any> => {
   const image = $(element).find('img').attr('src') ?? $(element).find('img').attr('srcset')?.split(',').pop()?.split(' ')[0] ?? '';
   const priceText = $(element).find('span.a-offscreen').text();
   const originalPriceText = $(element).find('span.a-text-price:not(.a-size-base)').text();
+  const shippingCost = element.querySelector('.s-prime') ? 0 : parseFloat((item.querySelector('.s-align-children-center')?.textContent?.trim() || '').replace(',', '.'));
   if (priceText) {
     const priceMatch = priceText.match(/(\d[\d,]*)\.?\d{0,2}/);
     const price = priceMatch ? parseFloat(priceMatch[1].replace(',', '.')) : 0;
@@ -77,6 +78,7 @@ export const exportProduct = async($, element, domain): Promise<any> => {
       price,
       originalPrice,
       discountRaw: discount,
+      shippingCost,
       discount: discount.toFixed(2),
     };
   }

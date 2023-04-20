@@ -15,6 +15,7 @@ export const sendDiscordNotification = async(notification: DiscordNotification) 
       { name: 'Original Price', value: `${product.originalPrice}`, inline: true },
       { name: 'Price', value: `${product.price}`, inline: true },
       { name: 'Discount', value: `${product.discount}%`, inline: true },
+      { name: 'Shipping Cost', value: `${product.shippingCost}`, inline: true },
     )
     .setTimestamp()
     .setFooter({text: 'Amazon Scraper Bot', iconURL: avatarUrl});
