@@ -11,7 +11,7 @@ const webhookUrl = process.env.WEBHOOK;
 export const sendDiscordNotification = async(notification: DiscordNotification) => {
   queue.push(notification);
   // execute the queue using the rate limiter
-  await limit(() => {
+  await limit(async () => {
     const notification = queue.shift();
     if (notification) {
       const { username, avatarUrl, product } = notification;
