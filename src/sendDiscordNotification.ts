@@ -2,9 +2,9 @@ import { WebhookClient, EmbedBuilder } from 'discord.js';
 import { AmazonSite, Product, DiscordNotification } from './types';
 require('dotenv').config();
 import pLimit from 'p-limit';
+const limit = pLimit(1);
 import fetch from 'node-fetch';
 
-const limit = pLimit(1); // set concurrency limit to 1
 const queue: any[] = []; // define a queue to store the notifications
 const webhookUrl = process.env.WEBHOOK;
 
