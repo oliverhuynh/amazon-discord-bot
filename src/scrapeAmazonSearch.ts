@@ -28,7 +28,9 @@ export const notify = async (products) => {
         product,
       };
 
-      const result = await sendDiscordNotification(notification);
+      setTimeout(async() => {
+        sendDiscordNotification(notification);
+      }, 100);
     }
   }
 }
