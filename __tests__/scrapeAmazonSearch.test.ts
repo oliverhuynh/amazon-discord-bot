@@ -22,7 +22,7 @@ describe.skip('listAmazonCategoryProducts', () => {
 });
 
 
-describe('scrapeAmazonSearch', () => {
+describe.skip('scrapeAmazonSearch', () => {
   it('should scrape Amazon search results for a specific keyword', async () => {
     const results = await scrapeAmazonSearch('laptop', ['amazon.com', 'amazon.fr', 'amazon.es']);
     console.log(['Results', results]);

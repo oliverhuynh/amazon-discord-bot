@@ -7,6 +7,7 @@ export interface Product {
   price: number;
   originalPrice: number;
   shippingCost: number;
+  shipping: string;
   discountRaw: number;
   discount: string;
 }
