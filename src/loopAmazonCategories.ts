@@ -38,7 +38,7 @@ export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []
   const cachedResult = await cache_get(key);
   let cats;
   if (!cachedResult) {
-    const [page, browser] = await openpage(url, {headless: false});
+    const [page, browser, close] = await openpage(url, {headless: false});
 
     // Wait for the "Departments" menu to appear
     await page.waitForSelector('#nav-hamburger-menu');
@@ -61,7 +61,7 @@ export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []
         links.map((link) => link.href)
       );
     }
-    await browser.close();
+    await close();
     await cache_set(key, cats);
     console.log(`Update cached categories for ${url}`, cats.length);
   }

@@ -18,7 +18,7 @@ export const listAmazonCategoryProducts = async (categoryUrl: string): Promise<P
     return cachedResult;
   }
   const domain = getDomainFromUrl(categoryUrl);
-  const [page, browser] = await openpage(categoryUrl);
+  const [page, browser, close] = await openpage(categoryUrl);
 
   const bodyHandle = await page.$('body');
   const html = await page.evaluate(body => body.innerHTML, bodyHandle);
@@ -29,7 +29,7 @@ export const listAmazonCategoryProducts = async (categoryUrl: string): Promise<P
 
   const href=$('.a-cardui-body > a[href*="/s?"]').attr('href');
   if (href) {
-    await browser.close();
+    await close();
     return await listAmazonCategoryProducts(`https://${domain}${href}`);
   }
 
@@ -40,7 +40,7 @@ export const listAmazonCategoryProducts = async (categoryUrl: string): Promise<P
     }
   });
 
-  await browser.close();
+  await close();
   await cache_set(key, products);
   return products;
 }

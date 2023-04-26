@@ -16,5 +16,10 @@ function cleanup {
   exit 1
 }
 
+[[ "$1" == "--kill" ]] && {
+  cleanup
+  return 0
+}
+
 trap cleanup SIGINT
 npx jest --silent=false
