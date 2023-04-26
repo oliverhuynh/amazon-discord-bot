@@ -68,7 +68,7 @@ export const exportProduct = async($, element, domain): Promise<any> => {
   const originalPriceText = $(element).find('span.a-text-price:not(.a-size-base)').text();
   const shipping = $(element).find('.s-align-children-center').length ? $(element).find('.s-align-children-center').text().trim() : '0';
   const shippingCost = $(element).find('.s-prime').length ? 0 : parseFloat(shipping.replace(',', '.').replace(/[^0-9,.]/g, ''));
-  console.log({shippingCost, p1: $(element).find('.s-prime').length, p2: $(element).find('.s-align-children-center').length, shipping});
+  // console.log({shippingCost, p1: $(element).find('.s-prime').length, p2: $(element).find('.s-align-children-center').length, shipping});
   if (priceText) {
     const priceMatch = priceText.match(/(\d[\d,]*)\.?\d{0,2}/);
     const price = priceMatch ? parseFloat(priceMatch[1].replace(',', '.')) : 0;
