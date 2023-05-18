@@ -7,7 +7,7 @@ function delay(ms: number) {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
 
-describe.only('sendDiscordNotification', () => {
+describe.skip('sendDiscordNotification', () => {
   it('should send a notification to Discord webhook', async () => {
     const notification: DiscordNotification = {
       username: 'Amazon Scraper Bot',

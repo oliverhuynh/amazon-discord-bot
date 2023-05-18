@@ -6,6 +6,15 @@ import { cache_get, cache_set } from './common';
 import puppeteer from 'puppeteer';
 require('dotenv').config();
 import * as fs from 'fs';
+const exclude = process.env.EXCLUDE;
+
+const isNotExcluded = ([,linkText]) => {
+  return !exclude.split(',').filter(s => {
+    return ! s.split(' ').filter(j => {
+      return ! linkText.toLowerCase().includes(j.toLowerCase());
+    }).length;
+  }).length;
+}
 
 export const scrapeCategories = async (url: string, page: any, domain: AmazonSite): Promise<string []> => {
   // Check if cache exists for the given URL
@@ -32,12 +41,13 @@ export const scrapeCategories = async (url: string, page: any, domain: AmazonSit
 }
 
 export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []> => {
+  const nocache_cats:string = process.env.NOCACHE_CATS || "";
   // Check if cache exists for the given URL
   const url = `https://${domain}`;
   const key = `loop-cats-${url}`;
   const cachedResult = await cache_get(key);
   let cats;
-  if (!cachedResult) {
+  if ((nocache_cats !== "") || !cachedResult) {
     const [page, browser, close] = await openpage(url, {headless: false});
 
     // Wait for the "Departments" menu to appear
@@ -51,15 +61,17 @@ export const loopAmazonCategories = async(domain: AmazonSite): Promise<string []
     // Wait for the subcategories to appear
     await page.waitForSelector('#hmenu-content > ul > li > a');
     if (domain.indexOf('amazon.com') === -1) {
-      cats = await page.$$eval('#hmenu-content > ul > li a[href*="gp/browse.html"]', (links) =>
-        links.map((link) => link.href)
+      cats = <any[]> await page.$$eval('#hmenu-content > ul > li a[href*="gp/browse.html"]', (links) =>
+        links.map((link) => [link.href, link.textContent || link.innerText])
       );
+      cats = cats.filter(isNotExcluded).map(([i]) => i);
     }
     else {
       // Retrieve the href of each subcategory
-      cats = await page.$$eval('#hmenu-content > ul > li a[href*="/s?"]', (links) =>
-        links.map((link) => link.href)
+      cats = <any[]> await page.$$eval('#hmenu-content > ul > li a[href*="/s?"]', (links) =>
+        links.map((link) => [link.href, link.textContent || link.innerText])
       );
+      cats = cats.filter(isNotExcluded).map(([i]) => i);
     }
     await close();
     await cache_set(key, cats);
