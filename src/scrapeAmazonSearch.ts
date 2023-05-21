@@ -27,7 +27,6 @@ export const notify = async (products) => {
         avatarUrl: 'https://i.imgur.com/wSTFkRM.png',
         product,
       };
-      console.log({notification});
 
       setTimeout(async() => {
         sendDiscordNotification(notification);

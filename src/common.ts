@@ -109,7 +109,20 @@ export function runScriptOnSigint(scriptPath: string): void {
   });
 }
 
-export const exportProduct = async($, element, domain): Promise<any> => {
+const exclude = process.env.EXCLUDE;
+export const isNotExcluded = ([,linkText]) => {
+  return !exclude.split(',').filter(s => {
+    return ! s.split(' ').filter(j => {
+      return ! linkText.toLowerCase().includes(j.toLowerCase());
+    }).length;
+  }).length;
+}
+
+export const isExcluded = ([,linkText]) => {
+  return !isNotExcluded([0, linkText]);
+}
+
+export const exportProduct = async ($, element, domain): Promise<any> => {
   const title = $(element).find('h2').text().trim();
   const productLink = $(element).find('a.a-link-normal').attr('href');
   const link = `https://${domain}${productLink}`;
@@ -118,15 +131,25 @@ export const exportProduct = async($, element, domain): Promise<any> => {
   const originalPriceText = $(element).find('span.a-text-price:not(.a-size-base)').text();
   const shipping = $(element).find('.s-align-children-center').length ? $(element).find('.s-align-children-center').text().trim() : '0';
   const shippingCost = $(element).find('.s-prime').length ? 0 : parseFloat(shipping.replace(',', '.').replace(/[^0-9,.]/g, ''));
-  // console.log({shippingCost, p1: $(element).find('.s-prime').length, p2: $(element).find('.s-align-children-center').length, shipping});
+
   if (priceText) {
     const priceMatch = priceText.match(/(\d[\d,]*)\.?\d{0,2}/);
     const price = priceMatch ? parseFloat(priceMatch[1].replace(',', '.')) : 0;
     const originalPriceMatch = originalPriceText.match(/(\d[\d,]*)\.?\d{0,2}/);
     const originalPrice = originalPriceMatch ? parseFloat(originalPriceMatch[1].replace(',', '.')) : price;
     const discount = (originalPrice - price) / originalPrice * 100;
-    
-   return {
+
+    const categoryTree: string[] = [];
+    const navigationItems = $('#departments ul li > .a-list-item');
+
+    navigationItems.each((_, item) => {
+      const category = $(item).text().trim();
+      categoryTree.push(category);
+    });
+
+    const isExclude = categoryTree.map(i => [0,i]).filter(isExcluded).length;
+
+    return !isExclude ? {
       title,
       image,
       link,
@@ -136,7 +159,11 @@ export const exportProduct = async($, element, domain): Promise<any> => {
       shippingCost,
       shipping: shippingCost === 0 ? 'Free' : 'Not free',
       discount: discount.toFixed(2),
-    };
+      categoryTree,
+    } : false;
   }
+
   return false;
 };
+
+

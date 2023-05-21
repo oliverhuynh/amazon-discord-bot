@@ -10,6 +10,7 @@ export interface Product {
   shipping: string;
   discountRaw: number;
   discount: string;
+  categoryTree: string[];
 }
 
 export interface DiscordNotification {

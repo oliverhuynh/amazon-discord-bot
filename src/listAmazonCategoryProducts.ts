@@ -35,6 +35,7 @@ export const listAmazonCategoryProducts = async (categoryUrl: string): Promise<P
   $('div.s-result-item').each(async (_, element) => {
     const product = await exportProduct($, element, domain);
     if (product) {
+      console.log({product});
       products.push(product);
     }
   });
