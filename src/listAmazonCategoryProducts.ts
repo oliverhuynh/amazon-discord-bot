@@ -1,8 +1,7 @@
 import * as puppeteer from 'puppeteer';
 import * as cheerio from 'cheerio';
 import { AmazonSite, Product } from './types';
-import { exportProduct, openpage } from './searchSingleAmazonSite';
-import { cache_get, cache_set } from './common';
+import { cache_get, cache_set, exportProduct, openpage } from './common';
 const { URL } = require('url');
 
 function getDomainFromUrl(url) {

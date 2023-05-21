@@ -1,14 +1,14 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { AmazonSite, Product } from './types';
-import { openpage } from './searchSingleAmazonSite';
-import { cache_get, cache_set } from './common';
+import { cache_get, cache_set, exportProduct, openpage } from './common';
 import puppeteer from 'puppeteer';
 require('dotenv').config();
 import * as fs from 'fs';
 const exclude = process.env.EXCLUDE;
 
 const isNotExcluded = ([,linkText]) => {
+  console.log({linkText});
   return !exclude.split(',').filter(s => {
     return ! s.split(' ').filter(j => {
       return ! linkText.toLowerCase().includes(j.toLowerCase());
