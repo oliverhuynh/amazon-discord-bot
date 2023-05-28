@@ -12,7 +12,7 @@ export const sendNotification = async(notification: DiscordNotification) => {
 
   const embed = new EmbedBuilder()
     .setColor('#0099ff')
-    .setTitle(product.title)
+    .setTitle(product.title.substr(0,200))
     .setURL(product.link)
     .setThumbnail(product.image)
     .addFields(
