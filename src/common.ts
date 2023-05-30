@@ -133,9 +133,9 @@ export const exportProduct = async ($, element, domain): Promise<any> => {
   const shippingCost = $(element).find('.s-prime').length ? 0 : parseFloat(shipping.replace(',', '.').replace(/[^0-9,.]/g, ''));
 
   if (priceText) {
-    const priceMatch = priceText.match(/(\d[\d,]*)\.?\d{0,2}/);
+    const priceMatch = priceText.replace(/ /g,'').match(/(\d[\d,]*)\.?\d{0,2}/);
     const price = priceMatch ? parseFloat(priceMatch[1].replace(',', '.')) : 0;
-    const originalPriceMatch = originalPriceText.match(/(\d[\d,]*)\.?\d{0,2}/);
+    const originalPriceMatch = originalPriceText.replace(/ /g,'').match(/(\d[\d,]*)\.?\d{0,2}/);
     const originalPrice = originalPriceMatch ? parseFloat(originalPriceMatch[1].replace(',', '.')) : price;
     const discount = (originalPrice - price) / originalPrice * 100;
 
