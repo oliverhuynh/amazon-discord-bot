@@ -22,6 +22,7 @@ describe.skip('sendDiscordNotification', () => {
         shipping: 'Free',
         discountRaw: 20.20,
         discount: '20.20',
+        categoryTree: []
       },
     };
 
